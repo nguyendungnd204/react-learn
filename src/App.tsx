@@ -5,6 +5,7 @@ import About from "./pages/About";
 import { Layout } from "antd";
 import Header from "./components/layouts/Header";
 import Register from "./pages/Register";
+import StudentManagement from "./pages/StudentManagement";
 
 const { Content } = Layout;
 
@@ -18,6 +19,7 @@ const App: React.FC = () => {
                         <Route path="/" element={<Login />} />
                         <Route path="/about" element={<About />} />
                         <Route path="/register" element={<Register />} />
+                        <Route path="/student-management" element={<StudentManagement />} />
                     </Routes>
                 </Content>
             </Layout>

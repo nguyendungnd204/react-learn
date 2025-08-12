@@ -20,7 +20,9 @@ const Header: React.FC = () => {
           defaultSelectedKeys={[location.pathname]}
           style={{ flex: 1, minWidth: 0, borderBottom: "none", background: "transparent" }}
         />
-        
+        <Link to="/student-management">
+          <InfoCircleOutlined style={{ marginRight: 8 }} /> Quản lý học sinh
+        </Link>
       </div>
     </AntHeader>
   );
