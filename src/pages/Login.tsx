@@ -2,8 +2,35 @@ import React, { useEffect, useState } from 'react';
 import { getStudents } from '../api/student.api';
 import { Button, Checkbox, Flex, Form, Input } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { login } from '../api/auth.pai';
 
-const Home: React.FC = () => {
+const Login: React.FC = () => {
+    const [loading, setLoading] = useState(false);
+    const [input, setInput] = useState({
+        email: '',
+        password: ''
+    });
+
+    const handleLogin = async () => {
+        setLoading(true);
+        try {
+            const data = await login(input.email, input.password);
+            console.log(data);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+      const fetchStudents = async () => {
+        const data = await getStudents();
+        console.log(data);
+      };
+      fetchStudents();
+    }, []);
+
   return (
     <div
       style={{
@@ -27,7 +54,7 @@ const Home: React.FC = () => {
           flexDirection: 'column',
         }}
       >
-        <h2 style={{ textAlign: 'center', marginBottom: 32, fontWeight: 700, color: '#3b82f6', letterSpacing: 1 }}>Sign In</h2>
+        <h2 style={{ textAlign: 'center', marginBottom: 32, fontWeight: 700, color: '#3b82f6', letterSpacing: 1 }}>Đăng nhập</h2>
         <Form.Item
           name="email"
           rules={[{ type:'email', required: true, message: 'Please input your Email!' }]}
@@ -37,6 +64,7 @@ const Home: React.FC = () => {
             placeholder="Email"
             size="large"
             style={{ borderRadius: 8, border: '1px solid #e5e7eb', background: '#f3f4f6' }}
+            onChange={(e) => setInput({ ...input, email: e.target.value })}
           />
         </Form.Item>
         <Form.Item
@@ -48,14 +76,15 @@ const Home: React.FC = () => {
             placeholder="Password"
             size="large"
             style={{ borderRadius: 8, border: '1px solid #e5e7eb', background: '#f3f4f6' }}
+            onChange={(e) => setInput({ ...input, password: e.target.value })}
           />
         </Form.Item>
         <Form.Item style={{ marginBottom: 8 }}>
           <Flex justify="space-between" align="center">
             <Form.Item name="remember" valuePropName="checked" noStyle>
-              <Checkbox style={{ color: '#6366f1' }}>Remember me</Checkbox>
+              <Checkbox style={{ color: '#6366f1' }}>Ghi nhớ tôi</Checkbox>
             </Form.Item>
-            <a href="" style={{ color: '#6366f1', fontWeight: 500 }}>Forgot password?</a>
+            <a href="" style={{ color: '#6366f1', fontWeight: 500 }}>Quên mật khẩu?</a>
           </Flex>
         </Form.Item>
         <Form.Item>
@@ -73,12 +102,13 @@ const Home: React.FC = () => {
               boxShadow: '0 2px 8px rgba(99, 102, 241, 0.15)',
               marginBottom: 8,
             }}
+            onClick={handleLogin}
           >
-            Log in
+            Đăng nhập
           </Button>
           <div style={{ textAlign: 'center', marginTop: 8 }}>
-            <span style={{ color: '#6b7280' }}>or </span>
-            <a href="" style={{ color: '#6366f1', fontWeight: 500 }}>Register now!</a>
+            <span style={{ color: '#6b7280' }}>hoặc</span>
+            <a href="" style={{ color: '#6366f1', fontWeight: 500 }}>Đăng ký ngay!</a>
           </div>
         </Form.Item>
       </Form>
@@ -86,4 +116,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default Login;
