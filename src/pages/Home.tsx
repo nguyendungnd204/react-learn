@@ -4,9 +4,6 @@ import { Button, Checkbox, Flex, Form, Input } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 
 const Home: React.FC = () => {
-  const onFinish = (values: any) => {
-    console.log('Received values of form: ', values);
-  };
   return (
     <div
       style={{
@@ -14,7 +11,7 @@ const Home: React.FC = () => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        background: 'linear-gradient(135deg, #e0e7ff 0%, #f5f7fa 100%)',
+       
       }}
     >
       <Form
@@ -29,16 +26,15 @@ const Home: React.FC = () => {
           display: 'flex',
           flexDirection: 'column',
         }}
-        onFinish={onFinish}
       >
         <h2 style={{ textAlign: 'center', marginBottom: 32, fontWeight: 700, color: '#3b82f6', letterSpacing: 1 }}>Sign In</h2>
         <Form.Item
-          name="username"
-          rules={[{ required: true, message: 'Please input your Username!' }]}
+          name="email"
+          rules={[{ type:'email', required: true, message: 'Please input your Email!' }]}
         >
           <Input
             prefix={<UserOutlined style={{ color: '#3b82f6' }} />}
-            placeholder="Username"
+            placeholder="Email"
             size="large"
             style={{ borderRadius: 8, border: '1px solid #e5e7eb', background: '#f3f4f6' }}
           />
