@@ -2,22 +2,14 @@ import { Button, Modal, Table, TableProps } from 'antd';
 import React, { useEffect, useState } from 'react'
 import { getStudents } from '../api/student.api';
 import CreateStudent from './CreateStudent';
+import { useDispatch, useSelector } from 'react-redux';
+import { setStudents } from '../store/studentSlice';
+import type { RootState } from '../store';
+import type { StudentList } from '../types/studentList';
 
 const StudentManagement = () => {
 
-    interface Student {
-        id: string;
-        student_code: string;
-        first_name: string;
-        last_name: string;
-        email: string;
-        dob: string;
-        gender: string;
-        phone: string;
-        address: string;
-    }
-
-    const columns: TableProps<Student>['columns'] = [
+    const columns: TableProps<StudentList>['columns'] = [
         {
             title: 'Student Code',
             dataIndex: 'student_code',
@@ -66,28 +58,46 @@ const StudentManagement = () => {
 
     ];
 
-    const [students, setStudents] = React.useState<Student[]>([]);
+    const dispatch = useDispatch();
+    const students = useSelector((state: RootState) => state.students.students);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    useEffect(() => {
-        const fetchStudents = async () => {
-            const response = await getStudents();
-            console.log(response);
-            setStudents(response.data);
-
-        }
-        fetchStudents();
-    }, []);
     const [pagination, setPagination] = React.useState({
         current: 1,
         pageSize: 5,
-        total: students.length,
+        total: 0,
     });
+
+    useEffect(() => {
+        setPagination(prev => ({
+            ...prev,
+            total: students.length
+        }));
+    }, [students]);
+
+    useEffect(() => {
+        fetchStudents();
+    }, [dispatch]);
 
 
 
     const showModal = () => {
         setIsModalOpen(true);
+    };
+
+    const fetchStudents = async () => {
+        try {
+            const response = await getStudents();
+            if (response && response.data) {
+                dispatch(setStudents(response.data));
+            }
+        } catch (error) {
+            console.error('Error fetching students:', error);
+        }
+    };
+
+    const handleStudentCreated = () => {
+        fetchStudents(); 
     };
 
 
@@ -101,8 +111,12 @@ const StudentManagement = () => {
                 <h2>Quản lý học sinh</h2>
                 <Button type='primary' size="large" onClick={showModal}>Thêm học sinh</Button>
             </div>
-            <CreateStudent isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
-            <Table<Student>
+            <CreateStudent 
+                isModalOpen={isModalOpen} 
+                setIsModalOpen={setIsModalOpen}
+                onStudentCreated={handleStudentCreated}
+            />
+            <Table<StudentList>
                 columns={columns}
                 dataSource={students}
                 pagination={pagination}

@@ -1,19 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import type { StudentList } from '../types/studentList';
 
-interface Student {
-  id: string;
-  student_code: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  dob: string;
-  gender: string;
-  phone: string;
-  address: string;
-}
 
 interface StudentState {
-  students: Student[];
+  students: StudentList[];
 }
 
 const initialState: StudentState = {
@@ -24,11 +14,23 @@ const studentSlice = createSlice({
   name: 'students',
   initialState,
   reducers: {
-    setStudents: (state, action: PayloadAction<Student[]>) => {
+    setStudents: (state, action: PayloadAction<StudentList[]>) => {
       state.students = action.payload;
+    },
+    addStudent: (state, action: PayloadAction<StudentList>) => {
+      state.students.push(action.payload);
+    },
+    updateStudent: (state, action: PayloadAction<StudentList>) => {
+      const index = state.students.findIndex(student => student.id === action.payload.id);
+      if (index !== -1) {
+        state.students[index] = action.payload;
+      }
+    },
+    removeStudent: (state, action: PayloadAction<string>) => {
+      state.students = state.students.filter(student => student.id !== action.payload);
     },
   },
 });
 
-export const { setStudents } = studentSlice.actions;
+export const { setStudents, addStudent, updateStudent, removeStudent } = studentSlice.actions;
 export default studentSlice.reducer;
