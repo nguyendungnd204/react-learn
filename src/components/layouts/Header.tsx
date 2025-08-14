@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Layout, Menu } from "antd";
-import { HomeOutlined, InfoCircleOutlined, UserOutlined } from "@ant-design/icons";
+import { HomeOutlined, TeamOutlined, UserOutlined } from "@ant-design/icons";
 
 const { Header: AntHeader } = Layout;
 
@@ -15,14 +15,14 @@ const Header: React.FC = () => {
           <UserOutlined style={{ marginRight: 8 }} /> EduFit
         </div>
         </Link>
+        <Link to="/student-management" style={{ marginLeft: 16, fontWeight: 500, fontSize: 18, color: '#6366f1', display: 'flex', alignItems: 'center' }}>
+          <TeamOutlined style={{ marginRight: 8 }} /> Quản lý học sinh
+        </Link>
         <Menu
           mode="horizontal"
           defaultSelectedKeys={[location.pathname]}
           style={{ flex: 1, minWidth: 0, borderBottom: "none", background: "transparent" }}
         />
-        <Link to="/student-management">
-          <InfoCircleOutlined style={{ marginRight: 8 }} /> Quản lý học sinh
-        </Link>
       </div>
     </AntHeader>
   );

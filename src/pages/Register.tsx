@@ -1,28 +1,37 @@
 import React, { useEffect, useState } from 'react';
 import { getStudents } from '../api/student.api';
-import { Button, Checkbox, Flex, Form, Input } from 'antd';
+import { Badge, Button, Checkbox, Flex, Form, Input, Select, Space, Typography } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { login } from '../api/auth.pai';
+import { Link } from 'react-router-dom';
 
 const Register: React.FC = () => {
-    const [loading, setLoading] = useState(false);
-    const [input, setInput] = useState({
-        email: '',
-        password: ''
-    });
+  const { Text } = Typography;
+  const [loading, setLoading] = useState(false);
+  const [input, setInput] = useState({
+    email: '',
+    password: '',
+    password_confirmation: '',
+    name: '',
+    gender: ''
+  });
 
-    const handleLogin = async () => {
-        setLoading(true);
-        try {
-            const data = await login(input.email, input.password);
-            console.log(data);
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setLoading(false);
-        }
-    };
-    
+  const handleLogin = async () => {
+    setLoading(true);
+    try {
+      const data = await login(input.email, input.password);
+      console.log(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGenderChange = (value: string) => {
+    setInput((prev) => ({ ...prev, gender: value }));
+  };
+
 
   return (
     <div
@@ -31,14 +40,14 @@ const Register: React.FC = () => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-       
+
       }}
     >
       <Form
         name="login"
         initialValues={{ remember: true }}
         style={{
-          width: 380,
+          width: 460,
           background: 'white',
           borderRadius: 18,
           boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.15)',
@@ -47,10 +56,21 @@ const Register: React.FC = () => {
           flexDirection: 'column',
         }}
       >
-        <h2 style={{ textAlign: 'center', marginBottom: 32, fontWeight: 700, color: '#3b82f6', letterSpacing: 1 }}>Đăng ký</h2>
+        <Text style={{ textAlign: 'center', marginBottom: 32, fontWeight: 700, color: '#3b82f6', letterSpacing: 1 }}>Đăng ký</Text>
+        <Form.Item
+          name="name"
+          rules={[{ required: true, message: 'Please input your Name!' }]}
+        >
+          <Input
+            prefix={<UserOutlined style={{ color: '#3b82f6' }} />}
+            placeholder="Name"
+            size="large"
+            style={{ borderRadius: 8, border: '1px solid #e5e7eb', background: '#f3f4f6' }}
+          />
+        </Form.Item>
         <Form.Item
           name="email"
-          rules={[{ type:'email', required: true, message: 'Please input your Email!' }]}
+          rules={[{ type: 'email', required: true, message: 'Please input your Email!' }]}
         >
           <Input
             prefix={<UserOutlined style={{ color: '#3b82f6' }} />}
@@ -70,11 +90,37 @@ const Register: React.FC = () => {
             style={{ borderRadius: 8, border: '1px solid #e5e7eb', background: '#f3f4f6' }}
           />
         </Form.Item>
-      <Form.Item
-        name=""
-      >
-
-      </Form.Item>
+        <Form.Item
+          name="password_confirmation"
+          rules={[{ required: true, message: 'Please confirm your Password!' }, ({ getFieldValue }) => ({
+            validator(_, value) {
+              if (!value || getFieldValue('password') === value) {
+                return Promise.resolve();
+              }
+              return Promise.reject(new Error('Mật khẩu xác nhận không khớp!'));
+            },
+          }),]}
+        >
+          <Input.Password
+            prefix={<LockOutlined style={{ color: '#3b82f6' }} />}
+            placeholder="Confirm Password"
+            size="large"
+            style={{ borderRadius: 8, border: '1px solid #e5e7eb', background: '#f3f4f6' }}
+          />
+        </Form.Item>
+        <Form.Item label="Gender" name="gender" rules={[{ required: true, message: 'Please select your Gender!' }]}>
+          <Select
+            defaultValue=""
+            placeholder="Chọn giới tính"
+            style={{ width: 120 }}
+            onChange={handleGenderChange}
+            options={[
+              { value: 'male', label: 'Male' },
+              { value: 'female', label: 'Female' },
+              { value: 'other', label: 'Other' },
+            ]}
+          />
+        </Form.Item>
         <Form.Item>
           <Button
             block
@@ -94,10 +140,10 @@ const Register: React.FC = () => {
           >
             Đăng ký
           </Button>
-          <div style={{ textAlign: 'center', marginTop: 8 }}>
-            <span style={{ color: '#6b7280' }}>hoặc </span>
-            <a href="" style={{ color: '#6366f1', fontWeight: 500 }}>Đăng nhập ngay!</a>
-          </div>
+          <Space style={{ textAlign: 'center', marginTop: 8, display: 'flex', justifyContent: 'center' }}>
+            <Badge style={{ color: '#6b7280' }}>hoặc </Badge>
+            <Link to="/" style={{ color: '#6366f1', fontWeight: 500 }}>Đăng nhập ngay!</Link>
+          </Space>
         </Form.Item>
       </Form>
     </div>

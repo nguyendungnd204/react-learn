@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { getStudents } from '../api/student.api';
-import { Button, Checkbox, Flex, Form, Input } from 'antd';
+import { Badge, Button, Checkbox, Flex, Form, Input, Space } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { login } from '../api/auth.pai';
+import { Link } from 'react-router-dom';
+import { Typography } from "antd";
 
 const Login: React.FC = () => {
+    const { Text } = Typography;
     const [loading, setLoading] = useState(false);
     const [input, setInput] = useState({
         email: '',
@@ -45,7 +48,7 @@ const Login: React.FC = () => {
         name="login"
         initialValues={{ remember: true }}
         style={{
-          width: 380,
+          width: 500,
           background: 'white',
           borderRadius: 18,
           boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.15)',
@@ -54,7 +57,7 @@ const Login: React.FC = () => {
           flexDirection: 'column',
         }}
       >
-        <h2 style={{ textAlign: 'center', marginBottom: 32, fontWeight: 700, color: '#3b82f6', letterSpacing: 1 }}>Đăng nhập</h2>
+        <Text style={{ textAlign: 'center', marginBottom: 32, fontWeight: 700, color: '#3b82f6', letterSpacing: 1 }}>Đăng nhập</Text>
         <Form.Item
           name="email"
           rules={[{ type:'email', required: true, message: 'Please input your Email!' }]}
@@ -84,7 +87,7 @@ const Login: React.FC = () => {
             <Form.Item name="remember" valuePropName="checked" noStyle>
               <Checkbox style={{ color: '#6366f1' }}>Ghi nhớ tôi</Checkbox>
             </Form.Item>
-            <a href="" style={{ color: '#6366f1', fontWeight: 500 }}>Quên mật khẩu?</a>
+            <Link to="/" style={{ color: '#6366f1', fontWeight: 500 }}>Quên mật khẩu?</Link>
           </Flex>
         </Form.Item>
         <Form.Item>
@@ -106,10 +109,10 @@ const Login: React.FC = () => {
           >
             Đăng nhập
           </Button>
-          <div style={{ textAlign: 'center', marginTop: 8 }}>
-            <span style={{ color: '#6b7280' }}>hoặc</span>
-            <a href="" style={{ color: '#6366f1', fontWeight: 500 }}>Đăng ký ngay!</a>
-          </div>
+          <Space style={{ textAlign: 'center', marginTop: 8, display: 'flex', justifyContent: 'center' }}>
+            <Badge style={{ color: '#6b7280' }}>hoặc</Badge>
+            <Link to="/register" style={{ color: '#6366f1', fontWeight: 500 }}>Đăng ký ngay!</Link>
+          </Space>
         </Form.Item>
       </Form>
     </div>

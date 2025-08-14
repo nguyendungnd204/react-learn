@@ -1,4 +1,4 @@
-import { Button, Modal, Table, TableProps } from 'antd';
+import { Button, Modal, Popconfirm, Space, Table, TableProps, Typography } from 'antd';
 import React, { useEffect, useState } from 'react'
 import { getStudents } from '../api/student.api';
 import CreateStudent from './CreateStudent';
@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setStudents } from '../store/studentSlice';
 import type { RootState } from '../store';
 import type { StudentList } from '../types/studentList';
+import UpdateStudent from './UpdateStudent';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 
 const StudentManagement = () => {
 
@@ -54,13 +56,32 @@ const StudentManagement = () => {
         {
             title: 'Action',
             key: 'action',
+            render: (text, record) => (
+                <Space size="small">
+
+                    <Button onClick={() => {
+                        setSelectedStudent(record);
+                        setIsUpdateModalOpen(true);
+                    }}>Sửa</Button>
+                    <Popconfirm
+                        title="Delete the task"
+                        description="Are you sure to delete this task?"
+                        icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+                    >
+                        <Button danger>Delete</Button>
+                    </Popconfirm>
+                </Space>
+            ),
         },
 
     ];
 
+    const { Text } = Typography;
     const dispatch = useDispatch();
     const students = useSelector((state: RootState) => state.students.students);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+    const [selectedStudent, setSelectedStudent] = useState<StudentList | null>(null);
 
     const [pagination, setPagination] = React.useState({
         current: 1,
@@ -79,10 +100,16 @@ const StudentManagement = () => {
         fetchStudents();
     }, [dispatch]);
 
+    useEffect(() => {
+        if (!isUpdateModalOpen) {
+            setSelectedStudent(null);
+        }
+    }, [isUpdateModalOpen]);
+
 
 
     const showModal = () => {
-        setIsModalOpen(true);
+        setIsCreateModalOpen(true);
     };
 
     const fetchStudents = async () => {
@@ -97,7 +124,8 @@ const StudentManagement = () => {
     };
 
     const handleStudentCreated = () => {
-        fetchStudents(); 
+        
+        fetchStudents();
     };
 
 
@@ -107,14 +135,20 @@ const StudentManagement = () => {
 
     return (
         <div style={{ padding: '20px' }}>
-            <div style={{ marginBottom: '16px', justifyContent: 'space-between', display: 'flex' }}>
-                <h2>Quản lý học sinh</h2>
+            <Space style={{ marginBottom: '16px', justifyContent: 'space-between', display: 'flex' }}>
+                <Text strong style={{fontSize: '20px'}}>Quản lý học sinh</Text>
                 <Button type='primary' size="large" onClick={showModal}>Thêm học sinh</Button>
-            </div>
-            <CreateStudent 
-                isModalOpen={isModalOpen} 
-                setIsModalOpen={setIsModalOpen}
+            </Space>
+            <CreateStudent
+                isModalOpen={isCreateModalOpen}
+                setIsModalOpen={setIsCreateModalOpen}
                 onStudentCreated={handleStudentCreated}
+            />
+            <UpdateStudent
+                isModalOpen={isUpdateModalOpen}
+                setIsModalOpen={setIsUpdateModalOpen}
+                onStudentCreated={handleStudentCreated}
+                student={selectedStudent}
             />
             <Table<StudentList>
                 columns={columns}
