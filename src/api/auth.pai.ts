@@ -1,19 +1,31 @@
 const API_URL = 'http://localhost:8000/v1';
 
-export const login = async  (email: string, password: string) =>
-{
+export interface LoginResponse {
+    success?: boolean;
+    message?: string;
+    errors?: Record<string, string[]>;
+    data?: {
+        access_token: string;
+        refresh_token: string;
+        token_type: string;
+        expires_in: number;
+    };
+}
+
+export const login = async (email: string, password: string): Promise<LoginResponse> => {
     const response = await fetch(`${API_URL}/login`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password })
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-        throw new Error('Login failed');
+        throw data;
     }
 
-    const data = await response.json();
     return data;
 }

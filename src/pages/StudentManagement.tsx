@@ -1,4 +1,4 @@
-import { Button, Modal, Popconfirm, Space, Table, TableProps, Typography } from 'antd';
+import { Button, Modal, Popconfirm, Space, Table, TableProps, Typography, notification } from 'antd';
 import React, { useEffect, useState } from 'react'
 import { getStudents } from '../api/student.api';
 import CreateStudent from './CreateStudent';
@@ -8,8 +8,22 @@ import type { RootState } from '../store';
 import type { StudentList } from '../types/studentList';
 import UpdateStudent from './UpdateStudent';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import { useLocation } from 'react-router-dom';
 
 const StudentManagement = () => {
+    const location = useLocation();
+    const [api, contextHolder] = notification.useNotification();
+    useEffect(() => {
+        const state: any = location.state as any;
+        if (state && state.message) {
+            api.success({
+                message: state.message,
+                description: state.description,
+                duration: 2,
+            });
+            window.history.replaceState({}, document.title);
+        }
+    }, [location, api]);
 
     const columns: TableProps<StudentList>['columns'] = [
         {
@@ -135,6 +149,7 @@ const StudentManagement = () => {
 
     return (
         <div style={{ padding: '20px' }}>
+            {contextHolder}
             <Space style={{ marginBottom: '16px', justifyContent: 'space-between', display: 'flex' }}>
                 <Text strong style={{fontSize: '20px'}}>Quản lý học sinh</Text>
                 <Button type='primary' size="large" onClick={showModal}>Thêm học sinh</Button>
