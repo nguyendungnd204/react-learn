@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Dropdown, Layout, MenuProps, Space } from "antd";
 import { DownOutlined, TeamOutlined, UserOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import { setProfile } from '../../store/profileSlice';
+import MyProfile from '../MyProfile';
 
 const { Header: AntHeader } = Layout;
 const Header: React.FC = () => {
@@ -13,6 +14,7 @@ const Header: React.FC = () => {
   const profile = useSelector((state: RootState) => state.profile.profile);
 
   const isAuthenticated = Boolean(profile);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem('access_token');
@@ -24,15 +26,15 @@ const Header: React.FC = () => {
   const items: MenuProps['items'] = React.useMemo(() => (
     isAuthenticated
       ? [
-        { label: <Link to="/profile">Thông tin cá nhân</Link>, key: 'profile' },
+        { label: <Link to='#' onClick={() => setIsProfileOpen(true)}>Thông tin cá nhân</Link>, key: 'profile' },
         { type: 'divider' as const },
-        { label: <a onClick={handleLogout}>Đăng xuất</a>, key: 'logout' },
+        { label: <Link to='#' onClick={handleLogout}>Đăng xuất</Link>, key: 'logout' },
       ]
       : [
         { label: <Link to="/login">Đăng nhập</Link>, key: 'login' },
         { label: <Link to="/register">Đăng ký</Link>, key: 'register' },
       ]
-  ), [isAuthenticated]);
+  ), [isAuthenticated, setIsProfileOpen]);
 
   return (
     <AntHeader style={{ background: "#fff", boxShadow: "0 2px 8px rgba(0,0,0,0.05)", padding: '0' }}>
@@ -68,6 +70,10 @@ const Header: React.FC = () => {
                   </Space>
                 </a>
               </Dropdown>
+        <MyProfile
+          isModalOpen={isProfileOpen}
+          setIsModalOpen={setIsProfileOpen}
+        />
             </div>
           )
         }

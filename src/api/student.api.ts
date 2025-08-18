@@ -32,3 +32,37 @@ export const createStudent = async (data: CreateStudent) => {
     const json = await response.json();
     return json;
 }
+
+export const updateStudent = async (id: string | number, data: CreateStudent) => {
+    const response = await fetch(`${API_URL}/${id}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+        },
+        body: JSON.stringify(data),
+    })
+    if (!response.ok) {
+        throw new Error('Failed to update student');
+    }
+    const json = await response.json();
+    return json;
+}
+
+export const deleteStudent = async (id: string | number) => {
+    const response = await fetch(`${API_URL}/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+        }
+    })
+    if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(errText || 'Failed to delete student');
+    }
+
+    if (response.status === 204) return {};
+
+    return response.json().catch(() => ({}));
+}

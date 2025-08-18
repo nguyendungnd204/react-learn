@@ -9,11 +9,8 @@ const Home = () => {
 
   return (
     <div style={{ textAlign: 'center', marginTop: '20%' }}>
-      <Text strong>Chào mừng bạn đến với hệ thống quản lý sinh viên</Text>
+      <Text strong>Chào mừng bạn đến với hệ thống quản lý học sinh</Text>
       <br />
-      <Button type="primary">
-        <Link href="/login">Đăng nhập</Link>
-      </Button>
     </div>
   )
 }

@@ -1,12 +1,12 @@
 import { Button, Modal, Popconfirm, Space, Table, TableProps, Typography, notification } from 'antd';
 import React, { useEffect, useState } from 'react'
-import { getStudents } from '../api/student.api';
-import CreateStudent from './CreateStudent';
+import { deleteStudent, getStudents } from '../api/student.api';
+import CreateStudent from '../components/CreateStudent';
 import { useDispatch, useSelector } from 'react-redux';
 import { setStudents } from '../store/studentSlice';
 import type { RootState } from '../store';
 import type { StudentList } from '../types/studentList';
-import UpdateStudent from './UpdateStudent';
+import UpdateStudent from '../components/UpdateStudent';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { useLocation } from 'react-router-dom';
 
@@ -24,6 +24,25 @@ const StudentManagement = () => {
             window.history.replaceState({}, document.title);
         }
     }, [location, api]);
+
+    const fetchdeleteStudent = async (id: string | number) => {
+        try {
+            await deleteStudent(id);
+            api.success({
+                message: 'Xóa học sinh thành công',
+                description: 'Học sinh đã được xóa khỏi hệ thống.',
+                duration: 2,
+            });
+            fetchStudents();
+        } catch (error) {
+            console.error('Error deleting student:', error);
+            api.error({
+                message: 'Xóa học sinh thất bại',
+                description: 'Đã xảy ra lỗi khi xóa học sinh.',
+                duration: 2,
+            });
+        }
+    }
 
     const columns: TableProps<StudentList>['columns'] = [
         {
@@ -72,15 +91,17 @@ const StudentManagement = () => {
             key: 'action',
             render: (text, record) => (
                 <Space size="small">
-
                     <Button onClick={() => {
                         setSelectedStudent(record);
                         setIsUpdateModalOpen(true);
                     }}>Sửa</Button>
                     <Popconfirm
-                        title="Delete the task"
-                        description="Are you sure to delete this task?"
+                        title="Xác nhận xóa"
+                        description="Bạn có chắc muốn xóa học sinh này không?"
                         icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+                        onConfirm={() => fetchdeleteStudent(record.id)}
+                        okText="Xóa"
+                        cancelText="Hủy"
                     >
                         <Button danger>Delete</Button>
                     </Popconfirm>
@@ -147,7 +168,6 @@ const StudentManagement = () => {
 
     const handleTableChange = (pag: any) => {
         setPagination({ ...pagination, ...pag });
-        // Since we load all data at once, no need to refetch
     };
 
     return (
@@ -165,12 +185,13 @@ const StudentManagement = () => {
             <UpdateStudent
                 isModalOpen={isUpdateModalOpen}
                 setIsModalOpen={setIsUpdateModalOpen}
-                onStudentCreated={handleStudentCreated}
+                onStudentUpdated={handleStudentCreated}
                 student={selectedStudent}
             />
             <Table<StudentList>
                 columns={columns}
                 dataSource={students}
+                rowKey="id"
                 pagination={pagination}
                 onChange={handleTableChange}
             />

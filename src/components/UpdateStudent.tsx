@@ -1,19 +1,18 @@
-import { Button, DatePicker, DatePickerProps, Form, Input, Modal, Radio, Select, Space, message } from 'antd'
+import { DatePicker, Form, Input, Modal, Select, Space, message } from 'antd'
 import React, { useEffect } from 'react'
-import type { CreateStudent } from '../types/createStudent';
-import { createStudent } from '../api/student.api';
+import { updateStudent } from '../api/student.api';
 import { StudentList } from '../types/studentList';
 import dayjs from 'dayjs';
 
 const UpdateStudent = ({ 
     isModalOpen, 
     setIsModalOpen, 
-    onStudentCreated,
+    onStudentUpdated,
     student
 }: { 
     isModalOpen: boolean, 
     setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>,
-    onStudentCreated?: () => void,
+    onStudentUpdated?: () => void,
     student: StudentList | null
 }) => {
 
@@ -41,20 +40,26 @@ const UpdateStudent = ({
     const handleOk = async () => {
         try {
             const values = await form.validateFields();
-            await createStudent({ ...values, dob: values.dob ? values.dob.format('YYYY-MM-DD') : '' });
+            if (!student) {
+                message.error('Không có học sinh để cập nhật.');
+                return;
+            }
+            await updateStudent(student.id, { ...values, dob: values.dob ? values.dob.format('YYYY-MM-DD') : '' });
             message.success('Cập nhật sinh viên thành công!');
             form.resetFields();
             setIsModalOpen(false);
-            if (onStudentCreated) {
-                onStudentCreated();
+            if (onStudentUpdated) {
+                onStudentUpdated();
             }
-        } catch (error) {
-            message.error('Có lỗi xảy ra khi cập nhật sinh viên!');
-            console.error('Error creating student:', error);
+        } catch (error: any) {
+            const errorMessage = error?.response?.data?.message || error?.message || 'Có lỗi xảy ra khi cập nhật sinh viên!';
+            message.error(errorMessage);
+            console.error('Error updating student:', error);
         }
     };
 
     const handleCancel = () => {
+        form.resetFields();
         setIsModalOpen(false);
     };
 
@@ -62,10 +67,11 @@ const UpdateStudent = ({
         <>
             <Modal
                 title="Cập nhật học sinh"
-                closable={{ 'aria-label': 'Custom Close Button' }}
                 open={isModalOpen}
                 onOk={handleOk}
                 onCancel={handleCancel}
+                okText="Cập nhật"
+                cancelText="Hủy"
             >
                 <Form
                     layout={formLayout}
