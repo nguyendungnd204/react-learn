@@ -7,6 +7,7 @@ import Header from "./components/layouts/Header";
 import Register from "./pages/Register";
 import StudentManagement from "./pages/StudentManagement";
 import Error404 from "./components/errors/error-404";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const { Content } = Layout;
 
@@ -19,7 +20,9 @@ const App: React.FC = () => {
                     <Routes>
                         <Route path="/" element={<Login />} />
                         <Route path="/about" element={<About />} />
-                        <Route path="/register" element={<Register />} />
+                        <Route path="/register" element={
+                            <ProtectedRoute><Register /></ProtectedRoute>
+                        } />
                         <Route path="/student-management" element={<StudentManagement />} />
                         <Route path="*" element={<Error404 />} />
                     </Routes>

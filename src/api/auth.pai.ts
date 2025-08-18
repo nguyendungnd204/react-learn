@@ -1,20 +1,10 @@
+import type { Register } from "../types/register";
 import type { UserProfile } from "../types/userProfile";
 
 const API_URL = 'http://localhost:8000/v1';
 
-export interface LoginResponse {
-    success?: boolean;
-    message?: string;
-    errors?: Record<string, string[]>;
-    data?: {
-        access_token: string;
-        refresh_token: string;
-        token_type: string;
-        expires_in: number;
-    };
-}
 
-export const login = async (email: string, password: string): Promise<LoginResponse> => {
+export const login = async (email: string, password: string): Promise<any> => {
     const response = await fetch(`${API_URL}/login`, {
         method: 'POST',
         headers: {
@@ -23,13 +13,31 @@ export const login = async (email: string, password: string): Promise<LoginRespo
         body: JSON.stringify({ email, password })
     });
 
-    const data = await response.json();
+    const json = await response.json();
 
     if (!response.ok) {
-        throw data;
+        throw json;
     }
 
-    return data;
+    return json.data || json;
+}
+
+export const register = async (data: {data: Register}) => {
+  const response = await fetch(`${API_URL}/register`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  });
+
+  const json = await response.json();
+
+  if (!response.ok) {
+    throw json;
+  }
+
+  return json.data || json;
 }
 
 export const getProfile = async (): Promise<UserProfile> => {

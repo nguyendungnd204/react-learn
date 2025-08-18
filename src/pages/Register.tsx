@@ -1,35 +1,38 @@
-import React, { useEffect, useState } from 'react';
-import { getStudents } from '../api/student.api';
-import { Badge, Button, Checkbox, Flex, Form, Input, Select, Space, Typography } from 'antd';
+import React, { useState } from 'react';
+import { Badge, Button, Form, Input, Select, Space, Typography, notification } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { login } from '../api/auth.pai';
-import { Link } from 'react-router-dom';
+import { register } from '../api/auth.pai';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Register: React.FC = () => {
   const { Text } = Typography;
   const [loading, setLoading] = useState(false);
-  const [input, setInput] = useState({
-    email: '',
-    password: '',
-    password_confirmation: '',
-    name: '',
-    gender: ''
-  });
+  const [api, contextHolder] = notification.useNotification();
+  const [form] = Form.useForm();
+  const navigate = useNavigate();
 
-  const handleLogin = async () => {
+  const handleRegister = async (values: any) => {
     setLoading(true);
     try {
-      const data = await login(input.email, input.password);
-      console.log(data);
-    } catch (error) {
-      console.error(error);
+      const payload = {
+        name: values.name,
+        email: values.email,
+        password: values.password,
+        password_confirmation: values.password_confirmation,
+        gender: values.gender,
+      };
+      console.log('Register payload:', payload);
+
+      const data = await register({ data: payload });
+      api.success({ message: 'Đăng ký thành công', description: 'Vui lòng đăng nhập để tiếp tục.' });
+      form.resetFields();
+    } catch (error: any) {
+      console.error('Register error:', error);
+      const msg = (error && (error.message || error.error || JSON.stringify(error))) || 'Đăng ký thất bại';
+      api.error({ message: 'Đăng ký thất bại', description: msg });
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleGenderChange = (value: string) => {
-    setInput((prev) => ({ ...prev, gender: value }));
   };
 
 
@@ -44,8 +47,10 @@ const Register: React.FC = () => {
       }}
     >
       <Form
-        name="login"
+        form={form}
+        name="register"
         initialValues={{ remember: true }}
+        onFinish={handleRegister}
         style={{
           width: 460,
           background: 'white',
@@ -97,7 +102,7 @@ const Register: React.FC = () => {
               if (!value || getFieldValue('password') === value) {
                 return Promise.resolve();
               }
-              return Promise.reject(new Error('Mật khẩu xác nhận không khớp!'));
+              return Promise.reject(new Error('Passwords do not match!'));
             },
           }),]}
         >
@@ -113,7 +118,6 @@ const Register: React.FC = () => {
             defaultValue=""
             placeholder="Chọn giới tính"
             style={{ width: 120 }}
-            onChange={handleGenderChange}
             options={[
               { value: 'male', label: 'Male' },
               { value: 'female', label: 'Female' },
@@ -136,7 +140,7 @@ const Register: React.FC = () => {
               boxShadow: '0 2px 8px rgba(99, 102, 241, 0.15)',
               marginBottom: 8,
             }}
-            onClick={handleLogin}
+            loading={loading}
           >
             Đăng ký
           </Button>

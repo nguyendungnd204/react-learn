@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getStudents } from '../api/student.api';
 import { Badge, Button, Checkbox, Flex, Form, Input, notification, Space } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { login, LoginResponse, getProfile } from '../api/auth.pai';
+import { login, getProfile } from '../api/auth.pai';
 import { Link, Route, useNavigate } from 'react-router-dom';
 import { Typography } from "antd";
 import { useDispatch, useSelector } from 'react-redux';
@@ -21,10 +21,10 @@ const Login: React.FC = () => {
     const handleLogin = async (values: { email: string; password: string }) => {
         setLoading(true);
         try {
-            const data: LoginResponse = await login(values.email, values.password);
+            const data = await login(values.email, values.password);
             
-            localStorage.setItem('access_token', data.data?.access_token || '');
-            localStorage.setItem('refresh_token', data.data?.refresh_token || '');
+            localStorage.setItem('access_token', data?.access_token || '');
+            localStorage.setItem('refresh_token', data?.refresh_token || '');
 
             const profileData = await getProfile();
             console.log('Profile data:', profileData);
