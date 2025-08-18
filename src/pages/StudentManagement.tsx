@@ -99,7 +99,7 @@ const StudentManagement = () => {
 
     const [pagination, setPagination] = React.useState({
         current: 1,
-        pageSize: 5,
+        pageSize: 10,
         total: 0,
     });
 
@@ -129,9 +129,11 @@ const StudentManagement = () => {
     const fetchStudents = async () => {
         try {
             const response = await getStudents();
-            if (response && response.data) {
-                dispatch(setStudents(response.data));
-            }
+            console.log('Fetched students:', response);
+            const data = response.data || response;
+            dispatch(setStudents(data));
+            const total = response.meta?.total || (Array.isArray(data) ? data.length : 0);
+            setPagination(prev => ({ ...prev, total }));
         } catch (error) {
             console.error('Error fetching students:', error);
         }
@@ -145,6 +147,7 @@ const StudentManagement = () => {
 
     const handleTableChange = (pag: any) => {
         setPagination({ ...pagination, ...pag });
+        // Since we load all data at once, no need to refetch
     };
 
     return (

@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge, Button, Form, Input, Select, Space, Typography, notification } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { register } from '../api/auth.pai';
 import { Link, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store';
 
 const Register: React.FC = () => {
   const { Text } = Typography;
@@ -10,6 +12,11 @@ const Register: React.FC = () => {
   const [api, contextHolder] = notification.useNotification();
   const [form] = Form.useForm();
   const navigate = useNavigate();
+  const profile = useSelector((state: RootState) => state.profile.profile);
+
+  useEffect(() => {
+    if (profile) navigate('/student-management');
+  }, [profile, navigate]);
 
   const handleRegister = async (values: any) => {
     setLoading(true);
@@ -64,7 +71,9 @@ const Register: React.FC = () => {
         <Text style={{ textAlign: 'center', marginBottom: 32, fontWeight: 700, color: '#3b82f6', letterSpacing: 1 }}>Đăng ký</Text>
         <Form.Item
           name="name"
-          rules={[{ required: true, message: 'Please input your Name!' }]}
+          label="Tên"
+          layout='vertical'
+          rules={[{ required: true, message: 'Vui lòng nhập tên!' }]}
         >
           <Input
             prefix={<UserOutlined style={{ color: '#3b82f6' }} />}
@@ -75,7 +84,9 @@ const Register: React.FC = () => {
         </Form.Item>
         <Form.Item
           name="email"
-          rules={[{ type: 'email', required: true, message: 'Please input your Email!' }]}
+          label="Email"
+          layout='vertical'
+          rules={[{ type: 'email', required: true, message: 'Vui lòng nhập email!' }]}
         >
           <Input
             prefix={<UserOutlined style={{ color: '#3b82f6' }} />}
@@ -86,34 +97,38 @@ const Register: React.FC = () => {
         </Form.Item>
         <Form.Item
           name="password"
-          rules={[{ required: true, message: 'Please input your Password!' }]}
+          label="Mật khẩu"
+          layout='vertical'
+          rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}
         >
           <Input.Password
             prefix={<LockOutlined style={{ color: '#3b82f6' }} />}
-            placeholder="Password"
+            placeholder="Mật khẩu"
             size="large"
             style={{ borderRadius: 8, border: '1px solid #e5e7eb', background: '#f3f4f6' }}
           />
         </Form.Item>
         <Form.Item
           name="password_confirmation"
-          rules={[{ required: true, message: 'Please confirm your Password!' }, ({ getFieldValue }) => ({
+          label="Xác nhận mật khẩu"
+          layout='vertical'
+          rules={[{ required: true, message: 'Vui lòng xác nhận mật khẩu!' }, ({ getFieldValue }) => ({
             validator(_, value) {
               if (!value || getFieldValue('password') === value) {
                 return Promise.resolve();
               }
-              return Promise.reject(new Error('Passwords do not match!'));
+              return Promise.reject(new Error('Mật khẩu không khớp!'));
             },
           }),]}
         >
           <Input.Password
             prefix={<LockOutlined style={{ color: '#3b82f6' }} />}
-            placeholder="Confirm Password"
+            placeholder="Xác nhận mật khẩu"
             size="large"
             style={{ borderRadius: 8, border: '1px solid #e5e7eb', background: '#f3f4f6' }}
           />
         </Form.Item>
-        <Form.Item label="Gender" name="gender" rules={[{ required: true, message: 'Please select your Gender!' }]}>
+        <Form.Item label="Giới tính" name="gender" rules={[{ required: true, message: 'Vui lòng chọn giới tính!' }]}>
           <Select
             defaultValue=""
             placeholder="Chọn giới tính"

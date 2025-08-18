@@ -18,7 +18,7 @@ const Header: React.FC = () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     dispatch(setProfile(null));
-    navigate('/login');
+    navigate('/');
   };
 
   const items: MenuProps['items'] = React.useMemo(() => (

@@ -16,7 +16,13 @@ const Login: React.FC = () => {
     const navigate = useNavigate();
     const [api, contextHolder] = notification.useNotification();
     const dispatch = useDispatch();
-    const profile = useSelector((state: RootState) => state.profile);
+    const profile = useSelector((state: RootState) => state.profile.profile);
+
+    useEffect(() => {
+        if (profile) {
+            navigate('/student-management');
+        }
+    }, [profile, navigate]);
 
     const handleLogin = async (values: { email: string; password: string }) => {
         setLoading(true);
@@ -93,6 +99,8 @@ const Login: React.FC = () => {
                 
                 <Form.Item
                     name="email"
+                    label="Email"
+                    layout='vertical'
                     rules={[
                         { required: true, message: 'Vui lòng nhập email!' },
                         { type: 'email', message: 'Email không hợp lệ!' }
@@ -112,6 +120,8 @@ const Login: React.FC = () => {
                 
                 <Form.Item
                     name="password"
+                    label='Mật khẩu'
+                    layout='vertical'
                     rules={[
                         { required: true, message: 'Vui lòng nhập mật khẩu!' },
                         { min: 6, message: 'Mật khẩu phải có ít nhất 6 ký tự!' }

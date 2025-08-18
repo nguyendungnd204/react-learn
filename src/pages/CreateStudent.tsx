@@ -45,7 +45,6 @@ const CreateStudent = ({
                     address: '',
                 });
                 setIsModalOpen(false);
-                // Gọi callback để refresh danh sách sinh viên
                 if (onStudentCreated) {
                     onStudentCreated();
                 }
