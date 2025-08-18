@@ -2,9 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { getStudents } from '../api/student.api';
 import { Badge, Button, Checkbox, Flex, Form, Input, notification, Space } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { login, LoginResponse } from '../api/auth.pai';
+import { login, LoginResponse, getProfile } from '../api/auth.pai';
 import { Link, Route, useNavigate } from 'react-router-dom';
 import { Typography } from "antd";
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../store';
+import { setProfile } from '../store/profileSlice';
 
 const Login: React.FC = () => {
     const { Text } = Typography;
@@ -12,16 +15,20 @@ const Login: React.FC = () => {
     const [form] = Form.useForm();
     const navigate = useNavigate();
     const [api, contextHolder] = notification.useNotification();
+    const dispatch = useDispatch();
+    const profile = useSelector((state: RootState) => state.profile);
 
     const handleLogin = async (values: { email: string; password: string }) => {
         setLoading(true);
         try {
             const data: LoginResponse = await login(values.email, values.password);
             
-            localStorage.setItem('token', data.data?.access_token || '');
-            localStorage.setItem('refreshToken', data.data?.refresh_token || '');
+            localStorage.setItem('access_token', data.data?.access_token || '');
+            localStorage.setItem('refresh_token', data.data?.refresh_token || '');
 
-            // Chuyển sang trang quản lý và gửi state để trang đích hiển thị thông báo
+            const profileData = await getProfile();
+            console.log('Profile data:', profileData);
+            dispatch(setProfile(profileData));
             navigate('/student-management', { state: { message: 'Đăng nhập thành công!', description: 'Chào mừng bạn trở lại.' } });
             
         } catch (error: any) {

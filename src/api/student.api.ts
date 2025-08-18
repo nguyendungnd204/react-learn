@@ -7,7 +7,7 @@ export const getStudents = async () => {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
         }
     });
     if (!response.ok) {
@@ -22,7 +22,7 @@ export const createStudent = async (data: CreateStudent) => {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            // 'Authorization': `Bearer ${localStorage.getItem('token')}`
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
         },
         body: JSON.stringify(data),
     })

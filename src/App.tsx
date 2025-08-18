@@ -6,6 +6,7 @@ import { Layout } from "antd";
 import Header from "./components/layouts/Header";
 import Register from "./pages/Register";
 import StudentManagement from "./pages/StudentManagement";
+import Error404 from "./components/errors/error-404";
 
 const { Content } = Layout;
 
@@ -20,6 +21,7 @@ const App: React.FC = () => {
                         <Route path="/about" element={<About />} />
                         <Route path="/register" element={<Register />} />
                         <Route path="/student-management" element={<StudentManagement />} />
+                        <Route path="*" element={<Error404 />} />
                     </Routes>
                 </Content>
             </Layout>
