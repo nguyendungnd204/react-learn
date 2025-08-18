@@ -22,7 +22,7 @@ export const login = async (email: string, password: string): Promise<any> => {
     return json.data || json;
 }
 
-export const register = async (data: {data: Register}) => {
+export const register = async (data: Register) => {
   const response = await fetch(`${API_URL}/register`, {
     method: 'POST',
     headers: {

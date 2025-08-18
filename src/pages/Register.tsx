@@ -30,7 +30,7 @@ const Register: React.FC = () => {
       };
       console.log('Register payload:', payload);
 
-      const data = await register({ data: payload });
+      const data = await register(payload);
       api.success({ message: 'Đăng ký thành công', description: 'Vui lòng đăng nhập để tiếp tục.' });
       form.resetFields();
     } catch (error: any) {
@@ -53,6 +53,7 @@ const Register: React.FC = () => {
 
       }}
     >
+      {contextHolder}
       <Form
         form={form}
         name="register"
@@ -136,7 +137,7 @@ const Register: React.FC = () => {
             options={[
               { value: 'male', label: 'Male' },
               { value: 'female', label: 'Female' },
-              { value: 'other', label: 'Other' },
+              { value: 'unspecified', label: 'Other' },
             ]}
           />
         </Form.Item>

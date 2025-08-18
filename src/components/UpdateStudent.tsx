@@ -1,4 +1,4 @@
-import { DatePicker, Form, Input, Modal, Select, Space, message } from 'antd'
+import { DatePicker, Form, Input, Modal, Select, Space, notification } from 'antd'
 import React, { useEffect } from 'react'
 import { updateStudent } from '../api/student.api';
 import { StudentList } from '../types/studentList';
@@ -19,6 +19,7 @@ const UpdateStudent = ({
     type LayoutType = Parameters<typeof Form>[0]['layout'];
     const [form] = Form.useForm();
     const [formLayout, setFormLayout] = React.useState<LayoutType>('horizontal');
+    const [api, contextHolder] = notification.useNotification();
 
     useEffect(() => {
         if (student && isModalOpen) {
@@ -41,11 +42,17 @@ const UpdateStudent = ({
         try {
             const values = await form.validateFields();
             if (!student) {
-                message.error('Không có học sinh để cập nhật.');
+                api.error({
+                    message: 'Không có học sinh để cập nhật.',
+                    duration: 2,
+                });
                 return;
             }
             await updateStudent(student.id, { ...values, dob: values.dob ? values.dob.format('YYYY-MM-DD') : '' });
-            message.success('Cập nhật sinh viên thành công!');
+            api.success({
+                message: 'Cập nhật sinh viên thành công!',
+                duration: 2,
+            });
             form.resetFields();
             setIsModalOpen(false);
             if (onStudentUpdated) {
@@ -53,7 +60,10 @@ const UpdateStudent = ({
             }
         } catch (error: any) {
             const errorMessage = error?.response?.data?.message || error?.message || 'Có lỗi xảy ra khi cập nhật sinh viên!';
-            message.error(errorMessage);
+            api.error({
+                message: errorMessage,
+                duration: 2,
+            });
             console.error('Error updating student:', error);
         }
     };
@@ -65,6 +75,7 @@ const UpdateStudent = ({
 
     return (
         <>
+            {contextHolder}
             <Modal
                 title="Cập nhật học sinh"
                 open={isModalOpen}
