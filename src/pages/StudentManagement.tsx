@@ -1,6 +1,6 @@
 import { Button, Modal, Popconfirm, Space, Table, TableProps, Typography, notification } from 'antd';
-import React, { useEffect, useState } from 'react'
-import { deleteStudent, getStudents } from '../api/student.api';
+import React, { useCallback, useEffect, useState } from 'react'
+import { deleteStudent, getStudents, searchStudent } from '../api/student.api';
 import CreateStudent from '../components/CreateStudent';
 import { useDispatch, useSelector } from 'react-redux';
 import { setStudents } from '../store/studentSlice';
@@ -9,6 +9,7 @@ import type { StudentList } from '../types/studentList';
 import UpdateStudent from '../components/UpdateStudent';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { useLocation } from 'react-router-dom';
+import Search, { SearchProps } from 'antd/es/input/Search';
 
 const StudentManagement = () => {
     const location = useLocation();
@@ -161,7 +162,7 @@ const StudentManagement = () => {
     };
 
     const handleStudentCreated = () => {
-        
+
         fetchStudents();
     };
 
@@ -170,13 +171,50 @@ const StudentManagement = () => {
         setPagination({ ...pagination, ...pag });
     };
 
+    const [searchLoading, setSearchLoading] = useState(false);
+
+    // const onSearch: SearchProps['onSearch'] = useCallback(async (value: any) => {
+    //     console.log('onSearch called with:', value); // debug: xem có gọi không
+    //     try {
+    //         setSearchLoading(true);
+    //         if (!value || String(value).trim() === '') {
+    //             await fetchStudents();
+    //             return;
+    //         }
+    //         // gọi API search (POST body) - dùng searchStudent hoặc fetch nếu cần body
+    //         const res = await searchStudent(value); // đảm bảo searchStudent gửi POST body như backend cần
+    //         console.log('Search results:', res);
+    //         const data = res.data ?? res;
+    //         dispatch(setStudents(data));
+    //         const total = res.meta?.total ?? (Array.isArray(data) ? data.length : 0);
+    //         setPagination(prev => ({ ...prev, total, current: 1 }));
+    //     } catch (err) {
+    //         console.error('Error searching students:', err);
+    //     } finally {
+    //         setSearchLoading(false);
+    //     }
+    // }, [dispatch]);
+
+
     return (
         <div style={{ padding: '20px' }}>
             {contextHolder}
-            <Space style={{ marginBottom: '16px', justifyContent: 'space-between', display: 'flex' }}>
-                <Text strong style={{fontSize: '20px'}}>Quản lý học sinh</Text>
-                <Button type='primary' size="large" onClick={showModal}>Thêm học sinh</Button>
-            </Space>
+            <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: 16,
+                gap: 16,
+                flexWrap: 'wrap'
+            }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 16, minWidth: 0 }}>
+                    <Text strong style={{ fontSize: 20, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Quản lý học sinh</Text>
+                    <Search placeholder="Tìm kiếm học sinh" allowClear enterButton="Tìm" style={{ width: 320, minWidth: 160 }} />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <Button type='primary' size="large" onClick={showModal}>Thêm học sinh</Button>
+                </div>
+            </div>
             <CreateStudent
                 isModalOpen={isCreateModalOpen}
                 setIsModalOpen={setIsCreateModalOpen}

@@ -66,3 +66,22 @@ export const deleteStudent = async (id: string | number) => {
 
     return response.json().catch(() => ({}));
 }
+
+export const searchStudent = async (value: string) => {
+    const response = await fetch(`${API_URL}/search`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+        },
+        body: JSON.stringify({ 
+            student_code: value,
+            first_name: value,
+            last_name: value })
+    })
+    if (!response.ok) {
+        throw new Error('Failed to search students');
+    }
+    const json = await response.json();
+    return json;
+}
